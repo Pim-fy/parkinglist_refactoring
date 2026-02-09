@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>파킹 온</title>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&libraries=TData&appKey=%VITE_TMAP_APP_KEY%"></script>
+  </head>
+  <body>  
+    <!-- 브라우저가 처음 그리는 화면의 전부. -->
+    <!-- 리액트가 제어할 실제 DOM의 진입점. -->
+    <!-- 이후 JS가 로드되면서 리액트가 div 내부를 컴포넌트들로 채워 넣게 됨. -->
+    <!-- App.jsx 파일이 값을 집어넣게 될 뼈대 역할. -->
+    <div id="root"></div>
+
+    <!-- 자바스크립트 실행 파일. -->
+    <!-- jsx파일을 표준 자바스크립트 파일로 변환하여 전달하게 해줌. -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
