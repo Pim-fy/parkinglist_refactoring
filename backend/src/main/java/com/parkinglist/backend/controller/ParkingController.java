@@ -19,29 +19,36 @@ import com.parkinglist.backend.dto.ParkingRecommendationRequestDto;
 import com.parkinglist.backend.dto.ParkingResponseDto;
 import com.parkinglist.backend.entity.User;
 import com.parkinglist.backend.service.ParkingService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/parking")
 public class ParkingController {
+
+    // 의존성 주입.
     private final ParkingService parkingService;
 
+    // 주차장 선택 로그 저장.
     @PostMapping("/log")
-    @ResponseStatus(HttpStatus.CREATED)         // 성공 시 201 Created 응답
+    @ResponseStatus(HttpStatus.CREATED)         // 성공 시 201 Created 응답.
     public void saveParkingLog(
-        @RequestBody ParkingLogRequestDto requestDto,
-        @AuthenticationPrincipal User user      // 비로그인 시 user는 null이 됨
+        @Valid @RequestBody ParkingLogRequestDto requestDto,
+        @AuthenticationPrincipal User user      // 비로그인 시 user는 null이 됨.
     ) {
-        // 실제 로그인된 user 객체를 서비스로 전달
+        // 서비스 로직 호출.
         parkingService.saveLogAndCount(requestDto, user);       
     }
 
+    // 주차장 추천 결과 목록 요청, 내부 동기화 포함.
     @PostMapping("/recommend")
     public ResponseEntity<List<ParkingResponseDto>> getRecommendations(
-            @RequestBody ParkingRecommendationRequestDto requestDto) {
+        @RequestBody ParkingRecommendationRequestDto requestDto) {
         
-        // 이 유효성 검사는 목적지 좌표까지 확인하도록 강화하는 것이 좋습니다.
+        // 요청 데이터 유효성 검증.
+        // 필수 값 누락 시 400 Bad Request 반환.
         if (requestDto.getTmapParkingList() == null || 
             requestDto.getFilter() == null ||
             requestDto.getDestinationLat() == null || // 목적지 좌표 필수
@@ -49,17 +56,17 @@ public class ParkingController {
             return ResponseEntity.badRequest().build(); 
         }
 
-        // ★★★ DTO 객체 전체를 전달하도록 수정 ★★★
+        // 서비스 로직 호출.
         List<ParkingResponseDto> recommendations = parkingService.getRecommendations(requestDto);
-        
         return ResponseEntity.ok(recommendations);
     }
 
-    //  [신규] 상세 정보 API 엔드포인트 추가 
+    // 주차장 상세 정보 조회.
     @GetMapping("/details/{parkingId}")
     public ResponseEntity<ParkingDetailResponseDto> getParkingDetails(
-            @PathVariable String parkingId
+        @PathVariable String parkingId
     ) {
+        // 서비스 로직 호출.
         ParkingDetailResponseDto details = parkingService.getParkingDetails(parkingId);
         return ResponseEntity.ok(details);
     }

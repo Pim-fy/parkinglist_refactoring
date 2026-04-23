@@ -1,5 +1,6 @@
 package com.parkinglist.backend.dto.external;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,36 +8,42 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SeoulRealtimeDto {
 
-    // 1. 이 DTO는 "GetParkingInfo" 키를 찾습니다.
+    // 필드 선언.
+    // JsonProperty : JSON의 GetParkingInfo 키를 해당 필드에 매핑하라.
     @JsonProperty("GetParkingInfo") 
-    private GetParkingInfo getParkingInfo;
+    private ParkingInfo parkingInfo;
 
     @Getter
     @NoArgsConstructor
-    public static class GetParkingInfo {
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ParkingInfo {
         @JsonProperty("row")
         private List<Row> row;
     }
 
     @Getter
     @NoArgsConstructor
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Row {
-        // 2. 이 DTO는 매칭에 필요한 '주차장 코드'와
-        @JsonProperty("PKLT_CD") // (실제 필드명 확인 필요)
+        // 매칭에 필요한 주차장 코드와 실시간 정보만 포함됨.
+
+        // 매칭용 주차장 코드.
+        @JsonProperty("PKLT_CD")
         private String parkingCode;
 
-        // 3. 실시간 정보만 포함합니다.
+        // 총 주차 면수.
         @JsonProperty("TPKCT")
         private Integer capacity; 
 
+        // 현재 주차 대수.
         @JsonProperty("NOW_PRK_VHCL_CNT")
         private Integer curParking; 
 
-        // ▼▼▼ [신규] 이 필드를 추가해주세요. ▼▼▼
-        @JsonProperty("PKLT_NM") // (이것도 실제 필드명인지 확인 필요)
+        // 주차장 이름.
+        @JsonProperty("PKLT_NM")
         private String parkingName;
-        // ▲▲▲ [신규] 추가 완료 ▲▲▲
     }
 }

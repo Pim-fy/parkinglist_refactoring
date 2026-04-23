@@ -5,16 +5,17 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 프론트 -> 백으로 주차장 추천을 요청할 때 보낼 최종 DTO
-
 @Getter
 @NoArgsConstructor
+// 프론트엔드 -> 백엔드로 주차장 추천 최종 요청 DTO. 
 public class ParkingRecommendationRequestDto {
-    // tmap api에서 받은 원본 목록
-    private List<TmapParkingDto> tmapParkingList;
-    // 필터 옵션
+    // Tmap 검색 결과 원본 주차장 목록.
+    private List<TmapParkingRequestDto> tmapParkingList;
+    // 목적지 사업장 식별자.
+    private Long destinationLocationId;
+    // 필터 옵션.
     private ParkingFilterDto filter;
-    // private Long destinationLocationId;      // 주석 처리 추후 처리 필수.
-    private BigDecimal destinationLat;
-    private BigDecimal destinationLon;
+    // 목적지 좌표.
+    private BigDecimal destinationLat;      // 위도.
+    private BigDecimal destinationLon;      // 경도.
 }
