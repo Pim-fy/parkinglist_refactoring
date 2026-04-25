@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.parkinglist.backend.config.jwt.JwtTokenProvider;
 
 @Slf4j
 @Service
@@ -18,25 +19,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // 로그인 처리
-    public Optional<User> login(UserDto.LoginRequest request) {
+    public UserDto.LoginResponse login(UserDto.LoginRequest request) {
         Optional<User> userOpt = userRepository.findByUserId(request.getUserId());
 
         if(userOpt.isEmpty()) {
             log.debug("로그인 시도 : loginId = {} -> 사용자 없음", request.getUserId());
-            return Optional.empty();
+            return new UserDto.LoginResponse(
+                false, 
+                "ID또는 비밀번호가 일치하지 않습니다",
+                null,
+                null
+            );
         }
         User user = userOpt.get();
         String rawPassword = request.getPassword();
         String storedHash = user.getPassword();
 
         if(passwordEncoder.matches(rawPassword, storedHash)) {
+            String token = jwtTokenProvider.createToken(user);
+            String role = user.getRole().name();
             log.info("로그인 성공 : loginId = {}", request.getUserId());
-            return Optional.of(user);       // 성공 -> User 객체 반환
+            return new UserDto.LoginResponse(true, "로그인 성공.", token, role);
         } else {
             log.warn("로그인 실패(비밀번호 불일치) : loginId = {}", request.getUserId());
-            return  Optional.empty();       // 실패 -> 빈 Optional 반환
+            return new UserDto.LoginResponse(false, "ID또는 비밀번호가 일치하지 않습니다", null, null);
         }
     }
 
