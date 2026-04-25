@@ -1,6 +1,5 @@
 package com.parkinglist.backend.dto;
 
-import com.parkinglist.backend.entity.User;
 import com.parkinglist.backend.entity.enums.UserRole;
 
 import lombok.AllArgsConstructor;
@@ -33,15 +32,6 @@ public class UserDto {
         private String password;
         private String email;
         private UserRole role;
-
-        public User toUserEntity(String encodedPassword) {
-            return User.builder()
-                    .userId(this.userId)
-                    .password(encodedPassword)
-                    .email(this.email)
-                    .role(this.role)
-                    .build();
-        }
     }
     @Getter
     @Setter

@@ -58,8 +58,14 @@ public class UserService {
         }
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
+
         // 엔티티 변환 및 저장
-        User user = request.toUserEntity(encodedPassword);
+        User user = User.builder()
+                        .userId(request.getUserId())
+                        .password(encodedPassword)
+                        .email(request.getEmail())
+                        .role(request.getRole())
+                        .build();
         userRepository.save(user);
         log.info("회원가입 성공 : loginId = {}", request.getUserId());
     }
